@@ -1,19 +1,55 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from "react";
 
-const MyComponent = () => {
-  const [count, setCount] = useState(0);
+const Child = React.memo(({ handleChange, setShow }) => {
+  console.log("child ran");
+  return (
+    <>
+      <p>{handleChange()}</p>
+      <button onClick={() => setShow((prev) => !prev)}>change</button>
+    </>
+  );
+});
 
-  // Define a callback function using useCallback
-  const handleClick = useCallback(() => {
-    setCount((prevCount) => prevCount + 1);
-  }, []);
+function HookUseCallback() {
+  const [count, setCount] = useState({
+    num: 1,
+    id: "abcd",
+  });
+
+  const [show, setShow] = useState(false);
+
+  const handleChange = useCallback(() => {
+    return count.num * 2;
+  }, [count]);
+
+  const handleAdd = () => {
+    setCount((prev) => {
+      return {
+        ...prev,
+        num: prev.num + 1,
+      };
+    });
+  };
+
+  const handleSubstract = () => {
+    setCount((prev) => {
+      return {
+        ...prev,
+        num: prev.num - 1,
+      };
+    });
+  };
 
   return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={handleClick}>Increment</button>
-    </div>
-  );
-};
+    <>
+      <button onClick={handleSubstract}>-</button>
+      <span>{count.num}</span>
+      {show && <span>{count.id}</span>}
+      <button onClick={handleAdd}>+</button>
 
-export default MyComponent;
+      <Child handleChange={handleChange} setShow={setShow} />
+    </>
+  );
+}
+
+export default HookUseCallback;
